@@ -288,6 +288,35 @@ export const DeliveriesPage: React.FC = () => {
                   <span className="text-slate-400">Order ID:</span>
                   <span className="font-mono text-white font-semibold">{selectedDelivery.order_id}</span>
                 </div>
+                {(() => {
+                  const ord = orders.find((o) => o.order_id === selectedDelivery.order_id);
+                  const custName = ord?.customer_name || customers.find((c) => c.customer_id === ord?.customer_id)?.name;
+                  const restName = ord?.restaurant_name || restaurants.find((r) => r.restaurant_id === ord?.restaurant_id)?.name;
+                  return (
+                    <>
+                      {custName && (
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Customer:</span>
+                          <span className="text-slate-200 font-medium">{custName}</span>
+                        </div>
+                      )}
+                      {restName && (
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Restaurant:</span>
+                          <span className="text-slate-200 font-medium">{restName}</span>
+                        </div>
+                      )}
+                      {ord?.delivery_address && (
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Address:</span>
+                          <span className="text-slate-300 font-medium text-right max-w-[180px] truncate" title={ord.delivery_address}>
+                            {ord.delivery_address}
+                          </span>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
                 <div className="flex justify-between">
                   <span className="text-slate-400">Assigned Rider:</span>
                   <span className="text-slate-200 font-medium">

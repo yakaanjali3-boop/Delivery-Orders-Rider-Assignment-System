@@ -20,10 +20,12 @@ import { AcademicHubPage } from './components/academic/AcademicHubPage';
 import { SettingsPage } from './components/settings/SettingsPage';
 import { ToastContainer } from './components/common/ToastContainer';
 import { RiderAssignmentModal } from './components/assignment/RiderAssignmentModal';
+import { CreateOrderModal } from './components/orders/CreateOrderModal';
 
 const AppContent: React.FC = () => {
   const { currentUser, activeTab, setActiveTab } = useApp();
   const [globalAssignOrderId, setGlobalAssignOrderId] = useState<string | null>(null);
+  const [isGlobalCreateOrderOpen, setIsGlobalCreateOrderOpen] = useState(false);
 
   // If user is not authenticated, render Login Page
   if (!currentUser) {
@@ -42,7 +44,7 @@ const AppContent: React.FC = () => {
         return (
           <Dashboard
             onAutoAssignOrder={(orderId) => setGlobalAssignOrderId(orderId)}
-            onOpenCreateOrder={() => setActiveTab('orders')}
+            onOpenCreateOrder={() => setIsGlobalCreateOrderOpen(true)}
           />
         );
       case 'orders':
@@ -94,6 +96,16 @@ const AppContent: React.FC = () => {
           onSuccess={() => setGlobalAssignOrderId(null)}
         />
       )}
+
+      {/* Global Create Order Modal */}
+      <CreateOrderModal
+        isOpen={isGlobalCreateOrderOpen}
+        onClose={() => setIsGlobalCreateOrderOpen(false)}
+        onOrderCreated={(orderId) => {
+          setIsGlobalCreateOrderOpen(false);
+          setGlobalAssignOrderId(orderId);
+        }}
+      />
 
       {/* Toast Notifications */}
       <ToastContainer />

@@ -59,11 +59,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
     statusCounts[o.status] = (statusCounts[o.status] || 0) + 1;
   });
 
-  const getCustomerName = (custId: string) =>
-    customers.find((c) => c.customer_id === custId)?.name || custId;
+  const getCustomerName = (order: Order) =>
+    order.customer_name || customers.find((c) => c.customer_id === order.customer_id)?.name || order.customer_id;
 
-  const getRestaurantName = (restId: string) =>
-    restaurants.find((r) => r.restaurant_id === restId)?.name || restId;
+  const getRestaurantName = (order: Order) =>
+    order.restaurant_name || restaurants.find((r) => r.restaurant_id === order.restaurant_id)?.name || order.restaurant_id;
 
   const getRiderName = (riderId?: string) =>
     riders.find((r) => r.rider_id === riderId)?.name || 'Unassigned';
@@ -366,10 +366,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   <tr key={order.order_id} className="hover:bg-slate-850/40 transition-colors">
                     <td className="py-3 px-3 font-mono font-medium text-white">{order.order_id}</td>
                     <td className="py-3 px-3 text-slate-200">
-                      <div>{getCustomerName(order.customer_id)}</div>
+                      <div>{getCustomerName(order)}</div>
                       <div className="text-[10px] text-slate-400">{order.delivery_city}</div>
                     </td>
-                    <td className="py-3 px-3 text-slate-300">{getRestaurantName(order.restaurant_id)}</td>
+                    <td className="py-3 px-3 text-slate-300">{getRestaurantName(order)}</td>
                     <td className="py-3 px-3 font-mono font-semibold text-emerald-400 tabular-nums">
                       ₹{order.total_amount}
                     </td>

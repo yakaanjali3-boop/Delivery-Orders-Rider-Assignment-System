@@ -22,6 +22,7 @@ import {
 } from '../data/initialData';
 import { DEFAULT_WEIGHTS, evaluateRiderCandidates } from '../utils/assignment';
 import { calculateFullDeliveryRoute } from '../utils/dijkstra';
+import { REAL_RESTAURANTS } from '../data/realRestaurants';
 
 export interface ToastMessage {
   id: string;
@@ -578,8 +579,47 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const order = orders.find((o) => o.order_id === orderId);
     if (!order) return null;
 
-    const restaurant = restaurants.find((r) => r.restaurant_id === order.restaurant_id);
-    const customer = customers.find((c) => c.customer_id === order.customer_id);
+    let restaurant = restaurants.find((r) => r.restaurant_id === order.restaurant_id);
+    if (!restaurant && order.restaurant_id) {
+      const real = REAL_RESTAURANTS.find((r) => r.id === order.restaurant_id);
+      if (real) {
+        restaurant = {
+          restaurant_id: real.id,
+          name: real.name,
+          location: real.city,
+          phone: '0884-2345678',
+          address: real.area,
+          prep_time: real.prepTime,
+          rating: real.rating,
+          created_at: new Date().toISOString().replace('T', ' ').substring(0, 19),
+        };
+      } else {
+        restaurant = {
+          restaurant_id: order.restaurant_id,
+          name: order.restaurant_name || 'Partner Restaurant',
+          location: order.delivery_city || 'Kakinada',
+          phone: '0884-2345678',
+          address: order.delivery_city,
+          prep_time: 15,
+          rating: 4.8,
+          created_at: new Date().toISOString().replace('T', ' ').substring(0, 19),
+        };
+      }
+    }
+
+    let customer = customers.find((c) => c.customer_id === order.customer_id);
+    if (!customer) {
+      customer = {
+        customer_id: order.customer_id || `C-${Date.now().toString(36)}`,
+        name: order.customer_name || 'Customer',
+        phone: order.customer_phone || '9876543210',
+        address: order.delivery_address || 'Main Road',
+        email: `${(order.customer_name || 'customer').toLowerCase().replace(/\s+/g, '')}@example.com`,
+        city: order.delivery_city || 'Kakinada',
+        created_at: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      };
+    }
+
     if (!restaurant || !customer) return null;
 
     const candidates = evaluateRiderCandidates(order, restaurant, customer, riders, scoringWeights);
@@ -604,14 +644,41 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return false;
     }
 
-    const restaurant = restaurants.find((r) => r.restaurant_id === order.restaurant_id);
-    const customer = customers.find((c) => c.customer_id === order.customer_id);
+    let restaurant = restaurants.find((r) => r.restaurant_id === order.restaurant_id);
+    if (!restaurant && order.restaurant_id) {
+      const real = REAL_RESTAURANTS.find((r) => r.id === order.restaurant_id);
+      if (real) {
+        restaurant = {
+          restaurant_id: real.id,
+          name: real.name,
+          location: real.city,
+          phone: '0884-2345678',
+          address: real.area,
+          prep_time: real.prepTime,
+          rating: real.rating,
+          created_at: new Date().toISOString().replace('T', ' ').substring(0, 19),
+        };
+      }
+    }
+
+    let customer = customers.find((c) => c.customer_id === order.customer_id);
+    if (!customer) {
+      customer = {
+        customer_id: order.customer_id || 'C001',
+        name: order.customer_name || 'Customer',
+        phone: order.customer_phone || '9876543210',
+        address: order.delivery_address,
+        email: 'customer@example.com',
+        city: order.delivery_city || 'Kakinada',
+        created_at: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      };
+    }
 
     // Calculate Dijkstra path
     const route = calculateFullDeliveryRoute(
       rider.current_location,
-      restaurant ? restaurant.location : 'Kakinada',
-      customer ? customer.city : 'Samalkota',
+      restaurant ? restaurant.location : (order.delivery_city || 'Kakinada'),
+      customer ? customer.city : (order.delivery_city || 'Samalkota'),
       rider.average_speed || 30
     );
 

@@ -65,7 +65,10 @@ export interface OrderItem {
 export interface Order {
   order_id: string;
   customer_id: string;
+  customer_name?: string;
+  customer_phone?: string;
   restaurant_id: string;
+  restaurant_name?: string;
   order_time: string;
   delivery_address: string;
   delivery_city: string;

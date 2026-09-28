@@ -127,13 +127,15 @@ export const RiderAssignmentModal: React.FC<RiderAssignmentModalProps> = ({
         <div className="px-6 py-3 bg-slate-950/60 border-b border-slate-800/80 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
           <div>
             <span className="text-slate-400 block text-[10px] uppercase font-semibold">Pickup Restaurant</span>
-            <span className="font-semibold text-slate-200">{restaurant.name}</span>
+            <span className="font-semibold text-slate-200">{order.restaurant_name || restaurant.name}</span>
             <span className="text-slate-400 block text-[11px]">{restaurant.location}</span>
           </div>
           <div>
             <span className="text-slate-400 block text-[10px] uppercase font-semibold">Delivery Customer</span>
-            <span className="font-semibold text-slate-200">{customer.name}</span>
-            <span className="text-slate-400 block text-[11px] truncate">{customer.address}, {customer.city}</span>
+            <span className="font-semibold text-slate-200">{order.customer_name || customer.name}</span>
+            <span className="text-slate-400 block text-[11px] truncate">
+              {order.delivery_address || customer.address}, {order.delivery_city || customer.city}
+            </span>
           </div>
           <div>
             <span className="text-slate-400 block text-[10px] uppercase font-semibold">Order Total & Prep Time</span>
